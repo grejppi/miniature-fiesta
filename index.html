@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lol</title>
+    <script src="//cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        width: 100vw;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .tile {
+        font-family: sans-serif;
+        background-image: linear-gradient(45deg, #111, #222);
+        width: 5rem;
+        height: 5rem;
+        color: white;
+        border-radius: 0.5rem;
+        text-align: center;
+        font-size: 3rem;
+        touch-action: none;
+        user-select: none;
+        transform: translate(0px, 0px);
+      }
+
+      .tile > span {
+        display: inline-block;
+        transform: translateY(0.75rem);
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const text = location.search
+        ? location.search.substring(1)
+        : prompt(
+            'Please enter the text you want to play with',
+            'seuraa kortinlukijan ohjeita'
+          )
+
+      const tiles = [...text]
+        .filter(char => Boolean(char.trim()))
+        .map(char => {
+          const div = document.createElement('div')
+          div.classList.add('tile')
+          const span = document.createElement('span')
+          span.innerHTML = char.toUpperCase()
+          div.appendChild(span)
+          document.body.appendChild(div)
+          return div
+        })
+
+      interact('.tile').draggable({
+        inertia: true,
+        modifiers: [
+          interact.modifiers.snap({
+            targets: [interact.snappers.grid({ x: 80, y: 80 })],
+            range: Infinity,
+            relativePoints: [{ x: 0, y: 0 }],
+            endOnly: true,
+          }),
+        ],
+        autoScroll: true,
+        listeners: {
+          move(event) {
+            const target = event.target
+
+            const x = (parseFloat(target.dataset.x) || 0) + event.dx
+            const y = (parseFloat(target.dataset.y) || 0) + event.dy
+
+            target.style.transform = `translate(${x}px, ${y}px)`
+
+            target.dataset.x = x
+            target.dataset.y = y
+          },
+        },
+      })
+    </script>
+  </body>
+</html>
